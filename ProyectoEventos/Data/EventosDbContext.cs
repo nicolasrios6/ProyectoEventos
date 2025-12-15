@@ -10,5 +10,16 @@ namespace ProyectoEventos.Data
         {
         }
         public DbSet<Evento> Eventos { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Evento>()
+                .HasOne(e => e.Usuario)
+                .WithMany(u => u.Eventos)
+                .HasForeignKey(e => e.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
