@@ -16,8 +16,9 @@ namespace ProyectoEventos.Models
         public string Ubicacion { get; set; }
         public string? LinkCompra { get; set; }
         public EstadoEvento Estado { get; set; } = EstadoEvento.Pendiente;
-        public string UsuarioId { get; set; }
-        public Usuario Usuario { get; set; }
+        public string? UsuarioId { get; set; }
+        public Usuario? Usuario { get; set; }
+        public string ImagenUrl { get; set; }
     }
 
     public enum EstadoEvento

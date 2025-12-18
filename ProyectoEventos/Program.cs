@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProyectoEventos.Data;
+using ProyectoEventos.Models;
+using ProyectoEventos.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,38 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<EventosDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//agrega identiy al builder services
+builder.Services.AddIdentityCore<Usuario>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 3;
+}
+)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<EventosDbContext>()
+    .AddSignInManager();
+
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultScheme = IdentityConstants.ApplicationScheme;
+})
+    .AddIdentityCookies();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.SlidingExpiration = true;
+    options.LoginPath = "/Usuario/Login";
+    options.AccessDeniedPath = "/Usuario/AccessDenied";
+});
+
+
+
+builder.Services.AddScoped<ImagenStorage>();
+builder.Services.Configure<FormOptions>(o => {o.MultipartBodyLengthLimit = 2 * 1024 * 1024;});
 
 var app = builder.Build();
 
@@ -22,6 +58,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
