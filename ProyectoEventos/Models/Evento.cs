@@ -22,8 +22,9 @@ namespace ProyectoEventos.Models
         public string? ImagenUrl { get; set; }
     }
 
-    public class EventoViewModell
+    public class EventoViewModel
     {
+        public int Id { get; set; }
         [Required]
         [StringLength(100)]
         public string Titulo { get; set; }
@@ -37,13 +38,15 @@ namespace ProyectoEventos.Models
         public string? LinkCompra { get; set; }
 
         public IFormFile? Imagen { get; set; }
-        public string? ImagenUrl { get; set; }  
+        public string? ImagenUrl { get; set; }
     }
 
     public enum EstadoEvento
     {
         Pendiente,
         Aprobado,
-        Rechazado
+        Rechazado, 
+        Finalizado,
+        Inactivo
     }
 }

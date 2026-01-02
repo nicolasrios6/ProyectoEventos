@@ -1,64 +1,111 @@
-﻿@model ProyectoEventos.Models.Evento
+﻿@model ProyectoEventos.Models.EventoViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar";
 }
 
-<h1>Edit</h1>
+<h1>Editar</h1>
 
 <h4>Evento</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Titulo" class="control-label"></label>
+                <label asp-for="Titulo" class="control-label">Título</label>
                 <input asp-for="Titulo" class="form-control" />
                 <span asp-validation-for="Titulo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
+                <label asp-for="Descripcion" class="control-label">Descripción</label>
                 <input asp-for="Descripcion" class="form-control" />
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FechaHora" class="control-label"></label>
+                <label asp-for="FechaHora" class="control-label">Fecha y Hora</label>
                 <input asp-for="FechaHora" class="form-control" />
                 <span asp-validation-for="FechaHora" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Ubicacion" class="control-label"></label>
+                <label asp-for="Ubicacion" class="control-label">Ubicación</label>
                 <input asp-for="Ubicacion" class="form-control" />
                 <span asp-validation-for="Ubicacion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LinkCompra" class="control-label"></label>
+                <label asp-for="LinkCompra" class="control-label">Link de compra</label>
                 <input asp-for="LinkCompra" class="form-control" />
                 <span asp-validation-for="LinkCompra" class="text-danger"></span>
             </div>
+            
+
+                @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+                {
+                    <div class="mb-3">
+                        <label class="form-label">Imágen actual</label><br />
+                        <img src="~/@Model.ImagenUrl"
+                             class="img-fluid rounded"
+                             style="max-height: 250px;" />
+                    </div>
+                }
+                
+                <div class="mb-3">
+                    <label asp-for="Imagen" class="form-label">Cambiar imágen</label>
+                    <input asp-for="Imagen"
+                           type="file"
+                           class="form-control"
+                           accept="image/*"
+                           onchange="previewImagen(event)" />
+
+                    <span asp-validation-for="Imagen" class="text-danger"></span>
+
+                    <img id="imgPreview"
+                         class="img-fluid rounded d-none mt-3"
+                         style="max-height: 250px;" />
+                </div>
+
+            
             <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <select asp-for="Estado" class="form-control"></select>
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UsuarioId" class="control-label"></label>
-                <select asp-for="UsuarioId" class="form-control" asp-items="ViewBag.UsuarioId"></select>
-                <span asp-validation-for="UsuarioId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Guardar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Volver a la lista</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function previewImagen(event) {
+            const input = event.target;
+            const preview = document.getElementById('imgPreview');
+
+            if (!input.files || input.files.length === 0) {
+                preview.src = '#';
+                preview.classList.add('d-none');
+                return;
+            }
+
+            const file = input.files[0];
+
+            // Validación básica (opcional, UX)
+            if (!file.type.startsWith('image/')) {
+                preview.src = '#';
+                preview.classList.add('d-none');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            };
+
+            reader.readAsDataURL(file);
+        }
+    </script>
 }
